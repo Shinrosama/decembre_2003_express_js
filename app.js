@@ -1,110 +1,35 @@
 const express = require('express')
-
-//On construit une instance d'express 
 const app = express()
 const port = 3000
 
-const mockCoworking = require(`./mockCoworking`)
-const coworkings = require('./mockCoworking')
-
-
-const arrUsers = [
-    {
-        id: 12,
-        name: "Paul",
-        age: 35
-    },
-    {
-        id: 15,
-        name: "Pierre",
-        age: 28
-    }, {
-        id: 6,
-        name: "Mathilde",
-        age: 19
-    }
-]
-
+const mockCoworkings = require('./mockCoworkings')
 
 const logger = (req, res, next) => {
-  const now = new Date()
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  console.log(`${hours}h${minutes < 10 ? `0` + minutes : minutes} - ${req.url} DANS LOGGER`)
+    const now = new Date()
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    console.log(`${hours}h${minutes < 10 ? '0' + minutes : minutes} - ${req.url} DANS LOGGER`)
 
-  next()
+    next()
 }
 
 app.use(logger)
 
 app.get('/', (req, res) => {
     res.send('Hello World !')
-
-
-  })
-
-
-
-//----------------------------------------mockCoworking-----------------------------------------------------------------------------------  
+})
 
 app.get('/api/coworkings', (req, res) => {
-
-  let sentence = `Il y a ${coworkings.length} Coworking dans la liste`
-    res.send(sentence)
+    // Afficher la phrase : Il y a ... coworkings dans la liste. 
+    res.send(`Il y a ${mockCoworkings.length} coworkings dans la liste.`)
 })
 
 app.get('/api/coworkings/:id', (req, res) => {
+    let result = mockCoworkings.find(el => el.id === parseInt(req.params.id))
 
-  const coworkingurlId = parseInt(req.params.id)
-
-  let result = coworkings.find(el => el.id === coworkingurlId)
-
-    !result ? result = `aucun element ne correspond a l'id n° ${req.params.id}` : result = result
-
-    res.send(result)
-
-
-
-})
-
-
-
-//---------------------------------------- premiers exercises --------------------------------------------------------------------------------------
-
-app.get('/names', (req, res) => {
-    // Une requête ne peut renvoyer qu'une seule et unique réponse
-    // D'abord, on créé une chaîne de caractères à partir des éléments du tableau, puis on la renvoie dans une réponse
-    // => Paul et Pierre et Mathilde !
-    let sentence = ""
-
-    arrUsers.forEach(obj => {
-        sentence += obj.name + " "
-    })
-
-    sentence += "!"
-    res.send(sentence)
-})
-
-app.get('/names/:id', (req, res) => {
-    // console.log(parseInt(req.params.id))
-    // Implémenter le test pour sélectionner dans le tableau l'objet dont l'id correspond à l'id passé en paramètre d'url
-    // let result = "not found";
-    const urlId = parseInt(req.params.id)
-    //... trouver le bon objet dans le tableau
-
-    // for (let i = 0; i < arrUsers.length; i++) {
-    //     const element = arrUsers[i];
-    //     if (element.id === urlId) {
-    //         result = arrUsers[i].name
-    //         break;
-    //     }
-    // }
-
-
-    let result = arrUsers.find(el => el.id === urlId)
-
-    !result ? result = "not found" : result = result.name 
-
+    if (!result) {
+        result = `Aucun élément ne correspond à l'id n°${req.params.id}`
+    }
     res.send(result)
 })
 
