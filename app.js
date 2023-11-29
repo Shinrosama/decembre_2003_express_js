@@ -25,6 +25,18 @@ const arrUsers = [
     }
 ]
 
+
+const logger = (req, res, next) => {
+  const now = new Date()
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  console.log(`${hours}h${minutes < 10 ? `0` + minutes : minutes} - ${req.url} DANS LOGGER`)
+
+  next()
+}
+
+app.use(logger)
+
 app.get('/', (req, res) => {
     res.send('Hello World !')
 
@@ -36,7 +48,9 @@ app.get('/', (req, res) => {
 //----------------------------------------mockCoworking-----------------------------------------------------------------------------------  
 
 app.get('/api/coworkings', (req, res) => {
-    res.send(mockCoworking)
+
+  let sentence = `Il y a ${coworkings.length} Coworking dans la liste`
+    res.send(sentence)
 })
 
 app.get('/api/coworkings/:id', (req, res) => {
@@ -45,7 +59,7 @@ app.get('/api/coworkings/:id', (req, res) => {
 
   let result = coworkings.find(el => el.id === coworkingurlId)
 
-    !result ? result = "not found" : result = result
+    !result ? result = `aucun element ne correspond a l'id n° ${req.params.id}` : result = result
 
     res.send(result)
 
