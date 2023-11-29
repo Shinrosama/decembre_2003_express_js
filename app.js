@@ -3,7 +3,7 @@ const morgan = require(`morgan`)
 const app = express()
 const port = 3000
 
-const mockCoworkings = require('./mockCoworkings')
+let mockCoworkings = require('./mockCoworkings')
 const coworkings = require('./mockCoworkings')
 
 //middleware qui permet d'interpreter le corp de ma requête (req.body) en format json
@@ -53,7 +53,53 @@ app.post('/api/coworkings/', (req, res) => {
     res.json(nameCoworking)
   });
 
-//----------------------------------------------------------------------------
+
+//--------------------------PUT--------------------------------------------------------
+
+
+app.put("/api/coworkings/:id", (req,res)=> {
+
+
+    const coworking = mockCoworkings.find(el => el.id === parseInt(req.params.id))
+    
+    
+    let result;
+    
+    if (coworking) {
+        coworking.superficy = req.body.superficy
+         result = {message:`le endpoint put coworking fonctionne bien`, data : coworking }
+    } else {
+
+         result = {message:`le endpoint put coworking ne fonctionne pas`, data: {} }
+    }
+
+    res.json(result)
+});
+
+//--------------------------------DELETE--------------------------------------------
+
+
+app.delete("/api/coworkings/:id", (req,res)=>{
+
+    const coworking = mockCoworkings.find(el => el.id === parseInt(req.params.id))
+
+    let result;
+
+    if (coworking) {
+        mockCoworkings = mockCoworkings.filter(el => el.id !== coworking.id)
+
+        result = {message:`coworking supprimé`, data : coworking }
+        
+    } else {
+        result = {message:`le coworking n'existe pas`, data: {} }
+
+    
+    }
+
+    res.json(result)   
+
+})
+
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
