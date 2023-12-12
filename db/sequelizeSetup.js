@@ -2,7 +2,10 @@ const CoworkingModel = require('../models/coworkingModel')
 const UserModel = require('../models/userModel')
 const RoleModel = require('../models/roleModel')
 const { Sequelize, DataTypes } = require('sequelize');
-const { setCoworkings, setUsers, setRoles } = require('./setDataSample')
+const { setCoworkings, setUsers, setRoles, setCustomers, setRegistrations } = require('./setDataSample');
+const reviewModel = require('../models/reviewModel');
+// const customerModel = require('../models/customerModel');
+// const registrationModel = require('../models/registrationModel');
 
 const sequelize = new Sequelize('bordeaux_coworkings', 'root', '', {
     host: 'localhost',
@@ -13,6 +16,9 @@ const sequelize = new Sequelize('bordeaux_coworkings', 'root', '', {
 const Role = RoleModel(sequelize, DataTypes)
 const User = UserModel(sequelize, DataTypes)
 const Coworking = CoworkingModel(sequelize, DataTypes)
+const Review = reviewModel(sequelize, DataTypes)
+// const Customer = customerModel(sequelize, DataTypes)
+// const Registration = registrationModel(sequelize, DataTypes, Coworking, Customer)
 
 Role.hasMany(User)
 User.belongsTo(Role)
@@ -20,11 +26,22 @@ User.belongsTo(Role)
 User.hasMany(Coworking)
 Coworking.belongsTo(User)
 
+User.hasMany(Review)
+Review.belongsTo(User)
+
+Coworking.hasMany(Review)
+Review.belongsTo(Coworking)
+
+// Coworking.belongsToMany(Customer, { through: Registration });
+// Customer.belongsToMany(Coworking, { through: Registration });
+
 sequelize.sync({ force: true })
-    .then(() => {
-        // setCoworkings(Coworking)
-        setUsers(User)
-        setRoles(Role)
+    .then(async () => {
+        await setRoles(Role)
+        await setUsers(User)
+        await setCoworkings(Coworking)
+        // await setCustomers(Customer)
+        // setRegistrations(Registration)
     })
     .catch(error => {
         console.log(error)
@@ -36,4 +53,4 @@ sequelize.authenticate()
     .catch(error => console.error(`Impossible de se connecter à la base de données ${error}`))
 
 
-module.exports = { Coworking, User, Role }
+module.exports = { Coworking, User, Role, Review }
