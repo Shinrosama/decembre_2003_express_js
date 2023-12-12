@@ -1,10 +1,23 @@
 // const { Op } = require('sequelize')
-const { UniqueConstraintError, ValidationError } = require('sequelize')
-const { Coworking, User, Review } = require('../db/sequelizeSetup')
+const { UniqueConstraintError, ValidationError, QueryTypes } = require('sequelize')
+const { Coworking, User, Review, sequelize  } = require('../db/sequelizeSetup')
+const coworkings = require('../db/mock-coworkings')
 
 const findAllCoworkings = (req, res) => {
     // paramètre optionnel qui permet d'ajouter les données relatives aux commentaires d'un coworking
     Coworking.findAll({ include: Review })
+        .then((results) => {
+            res.json(results)
+        })
+        .catch(error => {
+            res.status(500).json(error.message)
+        })
+}
+
+const findAllCoworkingsRawSQL = (req, res) => {
+    // paramètre optionnel qui permet d'ajouter les données relatives aux commentaires d'un coworking
+    sequelize.query("SELECT name, rating FROM `coworkings` LEFT JOIN `reviews` ON coworkings.id = reviews.CoworkingId", {type: QueryTypes.SELECT})
+
         .then((results) => {
             res.json(results)
         })
@@ -93,4 +106,4 @@ const deleteCoworking = (req, res) => {
         })
 }
 
-module.exports = { findAllCoworkings, findCoworkingByPk, createCoworking, updateCoworking, deleteCoworking }
+module.exports = { findAllCoworkings, findCoworkingByPk, createCoworking, updateCoworking, deleteCoworking, findAllCoworkingsRawSQL }
