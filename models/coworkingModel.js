@@ -2,6 +2,11 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Coworking', {
         // Model attributes are defined here
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         name: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -49,7 +54,12 @@ module.exports = (sequelize, DataTypes) => {
                     msg: "La superficie doit être un entier."
                 }
             }
+        },
+        imageUrl: {
+            type: DataTypes.STRING
         }
+    }, {
+        onDelete: 'CASCADE'
     }
     );
 }
