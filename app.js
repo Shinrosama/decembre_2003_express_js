@@ -1,15 +1,18 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require("cors")
 const cookieParser = require('cookie-parser')
 const path = require('path')
 const app = express()
-const port = 3000
+const port = 3010
 
 // const { sequelize } = require('./db/sequelizeSetup')
 
 app.use(express.json())
+app.use(cors())
 app.use(morgan('dev'))
 // app.use(cookieParser())
+
 
 app.get('/', (req, res) => {
     // Exemple d'un cookie de première visite d'un site
